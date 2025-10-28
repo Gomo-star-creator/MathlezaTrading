@@ -1,0 +1,21 @@
+{
+  "profiles": {
+    "BuildBetter.EmailApi": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SMTP_HOST": "smtp.mailersend.net",
+        "SMTP_PORT": "587",
+        "SMTP_USER": "MS_29dkfX@test-86org8eryr0gew13.mlsender.net",
+        "SMTP_PASS": "mssp.1m2HbiO.neqvygm3zd5l0p7w.X8dpGI1",
+        "SMTP_FROM": "MS_29dkfX@test-86org8eryr0gew13.mlsender.net",
+        "SMTP_FROM_NAME": "Fumi7",
+        "SMTP_TO": "fumimakh@gmail.com",
+        "SMTP_ADMIN": "fumimakh@gmail.com"
+      }
+    }
+  }
+}
