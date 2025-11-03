@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Building2, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -143,12 +143,12 @@ const Header = () => {
     }
   } catch {}
 const navItems = [
-    { label: "Home", href: "#home", isAnchor: true },
-    { label: "Services", href: "#services", isAnchor: true },
-    { label: "Projects", href: "#projects", isAnchor: true },
-    { label: "About", href: "#about", isAnchor: true },
+    { label: "Home", href: "/home", isAnchor: false },
+    { label: "Services", href: "/services", isAnchor: false },
+    { label: "Projects", href: "/projects", isAnchor: false },
+    { label: "About", href: "/about", isAnchor: false },
     { label: "Machine Hire", href: "/machine-hire", isAnchor: false },
-    { label: "Contact", href: "#contact", isAnchor: true },
+    { label: "Contact", href: "/contact", isAnchor: false },
   ];
 
   return (
@@ -192,22 +192,26 @@ const navItems = [
                   {item.label}
                 </a>
               ) : (
-                <Link
+                <NavLink
                   key={item.label}
                   to={item.href}
-                  className="text-foreground hover:text-primary transition-colors duration-300 font-medium"
+                  className={({ isActive }) =>
+                    `transition-colors duration-300 font-medium ${isActive ? 'active-nav text-primary underline' : 'text-foreground hover:text-primary'}`
+                  }
                 >
                   {item.label}
-                </Link>
+                </NavLink>
               )
             ))}
           </nav>
 
           {/* CTA Button & Mobile Menu */}
           <div className="flex items-center space-x-4">
-            <Button variant="hero" className="hidden sm:inline-flex">
-              Get Quote
-            </Button>
+            <Link to="/contact" className="hidden sm:inline-flex">
+              <Button variant="hero">
+                Get Quote
+              </Button>
+            </Link>
             
             {/* Mobile Menu Button */}
             <button
@@ -238,19 +242,23 @@ const navItems = [
                     {item.label}
                   </a>
                 ) : (
-                  <Link
+                  <NavLink
                     key={item.label}
                     to={item.href}
-                    className="text-foreground hover:text-primary transition-colors duration-300 font-medium py-2"
+                    className={({ isActive }) =>
+                      `transition-colors duration-300 font-medium py-2 ${isActive ? 'active-nav text-primary underline' : 'text-foreground hover:text-primary'}`
+                    }
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
-                  </Link>
+                  </NavLink>
                 )
               ))}
-              <Button variant="hero" className="mt-4 w-full">
-                Get Quote
-              </Button>
+              <Link to="/contact" className="mt-4 w-full">
+                <Button variant="hero" className="w-full">
+                  Get Quote
+                </Button>
+              </Link>
             </nav>
           </div>
         )}

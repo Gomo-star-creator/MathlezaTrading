@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { getContent } from "@/lib/contentStore";
+import { Link } from "react-router-dom";
 import residentialImage from "@/assets/residential-construction.jpg";
 import commercialImage from "@/assets/commercial-construction.jpg";
 import renovationImage from "@/assets/renovation-services.jpg";
@@ -94,9 +95,11 @@ const Projects = () => {
         </div>
 
         <div className="text-center">
-          <Button variant="outline" size="lg">
-            View All Projects
-          </Button>
+          <Link to="/contact">
+            <Button variant="outline" size="lg">
+              Get Started Today
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

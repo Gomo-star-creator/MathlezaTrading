@@ -57,9 +57,7 @@ const About = () => {
               ))}
             </div>
 
-            <Button variant="cta" size="lg">
-              {overrides?.ctaLabel ?? "Get Started Today"}
-            </Button>
+            {/* CTA removed as per request */}
           </div>
 
           {/* Values Cards */}

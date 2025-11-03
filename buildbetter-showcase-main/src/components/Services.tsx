@@ -84,10 +84,7 @@ const Services = () => {
                     ))}
                   </ul>
                   
-                  <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground">
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+                  {/* Learn More button removed as requested */}
                 </CardContent>
               </Card>
             );

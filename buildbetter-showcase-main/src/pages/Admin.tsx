@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import { getContent, setContent, getRentalRequests } from "@/lib/contentStore";
+import { getContent, setContent, getRentalRequests, updateRentalRequestById, updateRentalRequestAt, getAdmins, addAdmin, removeAdmin, updateAdmin, deleteRentalRequestById, deleteRentalRequestAt } from "@/lib/contentStore";
 import { useToast } from "@/components/ui/use-toast";
 
 const Admin = () => {
@@ -52,7 +52,44 @@ const Admin = () => {
     toast({ title: "Saved", description: `${section} content updated.` });
   };
 
-  const rentalRequests = getRentalRequests();
+  const [rentalRequests, setRentalRequests] = useState(getRentalRequests());
+
+  const updateRequest = (idx: number, updates: any) => {
+    const req = rentalRequests[idx];
+    if (!req) return;
+    if (req.id) updateRentalRequestById(req.id, updates);
+    else updateRentalRequestAt(idx, updates);
+    setRentalRequests(getRentalRequests());
+  };
+
+  const sendEmail = (idx: number) => {
+    const r = rentalRequests[idx];
+    if (!r) return;
+    const statusLabel = r.status === "approved" ? "Approved" : r.status === "denied" ? "Denied" : "Pending";
+    const subject = encodeURIComponent(`Rental Request ${statusLabel} - ${r.fullName}`);
+    const itemsText = r.items.map(it => `- ${it.machine} x ${it.quantity}`).join("%0D%0A");
+    const body = encodeURIComponent(
+      `Hello ${r.fullName},\n\n` +
+      `Your rental request has been ${statusLabel.toLowerCase()}.\n\n` +
+      `Details:\n` +
+      `Start Date: ${r.startDate}\n` +
+      `Days: ${r.days}\n` +
+      `Items:\n${r.items.map(it => `- ${it.machine} x ${it.quantity}`).join("\n")}\n\n` +
+      (r.adminNote ? `Notes from admin:\n${r.adminNote}\n\n` : "") +
+      `Regards,\nMathleza Trading`
+    );
+    // Remove from storage immediately
+    if (r.id) deleteRentalRequestById(r.id); else deleteRentalRequestAt(idx);
+    setRentalRequests(getRentalRequests());
+    // Open email client
+    window.location.href = `mailto:${encodeURIComponent(r.email)}?subject=${subject}&body=${body}`;
+  };
+
+  const [adminsVersion, setAdminsVersion] = useState(0);
+  const admins = getAdmins();
+
+  const [editingUsername, setEditingUsername] = useState<string | null>(null);
+  const [editValues, setEditValues] = useState<{ firstName: string; lastName: string; email: string; phone: string; password?: string }>({ firstName: "", lastName: "", email: "", phone: "" });
 
   return (
     <div className="min-h-screen">
@@ -69,6 +106,7 @@ const Admin = () => {
                   <TabsList>
                     <TabsTrigger value="content">Content</TabsTrigger>
                     <TabsTrigger value="rentals">Rental Requests</TabsTrigger>
+                    <TabsTrigger value="admins">Admins</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="content" className="space-y-8 pt-6">
@@ -193,11 +231,14 @@ const Admin = () => {
                                 <th className="py-2 pr-4">Start</th>
                                 <th className="py-2 pr-4">Days</th>
                                 <th className="py-2 pr-4">Items</th>
+                                <th className="py-2 pr-4">Status</th>
+                                <th className="py-2 pr-4">Admin Description</th>
+                                <th className="py-2 pr-4">Action</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {rentalRequests.slice().reverse().map((r, i) => (
-                                <tr key={i} className="border-b align-top">
+                              {rentalRequests.slice().map((r, i) => (
+                                <tr key={r.id || i} className="border-b align-top">
                                   <td className="py-2 pr-4">{new Date(r.createdAt).toLocaleString()}</td>
                                   <td className="py-2 pr-4">{r.fullName}</td>
                                   <td className="py-2 pr-4">{r.email}</td>
@@ -211,12 +252,146 @@ const Admin = () => {
                                       ))}
                                     </ul>
                                   </td>
+                                  <td className="py-2 pr-4">
+                                    <select
+                                      className="border border-input bg-background rounded-md px-2 py-1"
+                                      value={r.status ?? "pending"}
+                                      onChange={(e) => updateRequest(i, { status: e.target.value })}
+                                    >
+                                      <option value="pending">Pending</option>
+                                      <option value="approved">Approved</option>
+                                      <option value="denied">Denied</option>
+                                    </select>
+                                  </td>
+                                  <td className="py-2 pr-4 min-w-[240px]">
+                                    <textarea
+                                      className="w-full border border-input bg-background rounded-md px-2 py-1 text-sm"
+                                      rows={3}
+                                      placeholder="Add details or instructions..."
+                                      value={r.adminNote ?? ""}
+                                      onChange={(e) => updateRequest(i, { adminNote: e.target.value })}
+                                    />
+                                  </td>
+                                  <td className="py-2 pr-4">
+                                    <Button size="sm" onClick={() => sendEmail(i)}>Send Email</Button>
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
                         </div>
                       )}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="admins" className="pt-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Card>
+                        <CardHeader><CardTitle>Register New Admin</CardTitle></CardHeader>
+                        <CardContent>
+                          <form
+                            className="space-y-4"
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              const form = e.currentTarget as HTMLFormElement;
+                              const data = new FormData(form);
+                              const username = String(data.get("username") || "").trim();
+                              const password = String(data.get("password") || "").trim();
+                              const firstName = String(data.get("firstName") || "").trim();
+                              const lastName = String(data.get("lastName") || "").trim();
+                              const email = String(data.get("email") || "").trim();
+                              const phone = String(data.get("phone") || "").trim();
+                              if (!username || !password) return;
+                              addAdmin({ username, password, firstName, lastName, email, phone });
+                              form.reset();
+                              toast({ title: "Admin saved", description: `${username} can now log in.` });
+                              setAdminsVersion(v => v + 1);
+                            }}
+                          >
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="admin-firstName">Name</Label>
+                                <Input id="admin-firstName" name="firstName" placeholder="Name" required />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="admin-lastName">Surname</Label>
+                                <Input id="admin-lastName" name="lastName" placeholder="Surname" required />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="admin-email">Email</Label>
+                                <Input id="admin-email" name="email" type="email" placeholder="name@example.com" required />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="admin-phone">Phone</Label>
+                                <Input id="admin-phone" name="phone" placeholder="Phone number" required />
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="admin-username">Username</Label>
+                              <Input id="admin-username" name="username" placeholder="e.g. SiteAdmin" required />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="admin-password">Password</Label>
+                              <Input id="admin-password" name="password" type="password" placeholder="Strong password" required />
+                            </div>
+                            <Button type="submit">Register</Button>
+                          </form>
+                        </CardContent>
+                      </Card>
+
+                      <Card>
+                        <CardHeader><CardTitle>Existing Admins</CardTitle></CardHeader>
+                        <CardContent>
+                          {admins.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">No additional admins added.</p>
+                          ) : (
+                            <ul className="divide-y">
+                              {admins.map((a) => (
+                                <li key={a.username} className="py-3">
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <div className="font-medium">{a.username}</div>
+                                      <div className="text-sm text-muted-foreground">{a.firstName} {a.lastName}</div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Button variant="outline" size="sm" onClick={() => { setEditingUsername(a.username); setEditValues({ firstName: a.firstName, lastName: a.lastName, email: a.email, phone: a.phone }); }}>Edit</Button>
+                                      <Button variant="secondary" size="sm" onClick={() => { removeAdmin(a.username); toast({ title: "Removed", description: `${a.username} removed.` }); setAdminsVersion(v => v + 1); }}>
+                                        Delete
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  {editingUsername === a.username && (
+                                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <div className="space-y-2">
+                                        <Label>Name</Label>
+                                        <Input value={editValues.firstName} onChange={e => setEditValues({ ...editValues, firstName: e.target.value })} />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Surname</Label>
+                                        <Input value={editValues.lastName} onChange={e => setEditValues({ ...editValues, lastName: e.target.value })} />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Email</Label>
+                                        <Input type="email" value={editValues.email} onChange={e => setEditValues({ ...editValues, email: e.target.value })} />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Phone</Label>
+                                        <Input value={editValues.phone} onChange={e => setEditValues({ ...editValues, phone: e.target.value })} />
+                                      </div>
+                                      <div className="md:col-span-2 flex items-center gap-2">
+                                        <Button size="sm" onClick={() => { updateAdmin(a.username, { firstName: editValues.firstName, lastName: editValues.lastName, email: editValues.email, phone: editValues.phone }); setEditingUsername(null); toast({ title: "Updated", description: `${a.username} details saved.` }); setAdminsVersion(v => v + 1); }}>Save</Button>
+                                        <Button size="sm" variant="secondary" onClick={() => setEditingUsername(null)}>Cancel</Button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </CardContent>
+                      </Card>
                     </div>
                   </TabsContent>
                 </Tabs>

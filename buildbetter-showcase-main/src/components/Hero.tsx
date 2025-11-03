@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Award, Users, Wrench } from "lucide-react";
 import heroImage from "@/assets/hero-construction.jpg";
+
 import { getContent } from "@/lib/contentStore";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   const content = getContent("home");
@@ -37,13 +39,18 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button variant="hero" size="lg" className="group">
-                {content?.ctaPrimaryLabel ?? "Start Your Project"}
+              <Link to="/projects">
+                <Button variant="hero" size="lg" className="group">
+                  {content?.ctaPrimaryLabel ?? "Start Your Project"}
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <Link to="/services">
+                <Button variant="outline" size="lg" className="bg-white/10 border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm">
+                {content?.ctaPrimaryLabel ?? "More Info"}
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button variant="outline" size="lg" className="bg-white/10 border-white text-white hover:bg-white hover:text-primary backdrop-blur-sm">
-                {content?.ctaSecondaryLabel ?? "View Our Work"}
-              </Button>
+                </Button>
+              </Link>
             </div>
 
             {/* Stats */}

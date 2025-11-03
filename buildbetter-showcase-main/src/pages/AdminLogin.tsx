@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { getAdmins } from "@/lib/contentStore";
 import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
@@ -30,7 +31,9 @@ const AdminLogin = () => {
                     const data = new FormData(form);
                     const username = String(data.get("username") || "");
                     const password = String(data.get("password") || "");
-                    if (username === "MainAdmin" && password === "MainAdmin@01") {
+                    const stored = getAdmins();
+                    const match = stored.find(a => a.username === username && a.password === password);
+                    if (username === "MainAdmin" && password === "MainAdmin@01" || match) {
                       toast({ title: "Welcome", description: "Login successful." });
                       navigate("/admin");
                     } else {

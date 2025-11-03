@@ -1,4 +1,5 @@
 import { Building2, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -9,7 +10,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <Building2 className="h-8 w-8 text-accent" />
-              <span className="text-2xl font-bold">Mathleza Trading</span>
+              <Link to="/home" className="text-2xl font-bold hover:underline">Mathleza Trading</Link>
             </div>
             <p className="text-primary-foreground/80 mb-6 max-w-md">
               Proudly South African since 2008. Built on Ubuntu values, we deliver 
@@ -37,24 +38,24 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Services</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                <Link to="/services" className="text-primary-foreground/80 hover:text-accent transition-colors">
                   Residential Construction
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                <Link to="/services" className="text-primary-foreground/80 hover:text-accent transition-colors">
                   Commercial Construction
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                <Link to="/services" className="text-primary-foreground/80 hover:text-accent transition-colors">
                   Renovation & Remodeling
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                <Link to="/services" className="text-primary-foreground/80 hover:text-accent transition-colors">
                   Project Management
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
