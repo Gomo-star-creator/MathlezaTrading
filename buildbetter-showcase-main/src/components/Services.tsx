@@ -4,6 +4,7 @@ import { Home, Building, Wrench, ArrowRight } from "lucide-react";
 import residentialImage from "@/assets/residential-construction.jpg";
 import commercialImage from "@/assets/commercial-construction.jpg";
 import renovationImage from "@/assets/renovation-services.jpg";
+import { getContent } from "@/lib/contentStore";
 
 const Services = () => {
   const services = [
@@ -30,6 +31,7 @@ const Services = () => {
     },
   ];
 
+  const overrides = getContent("services");
   return (
     <section id="services" className="py-20 bg-gradient-to-b from-background to-construction-light/30">
       <div className="container mx-auto px-4 lg:px-8">
@@ -38,12 +40,11 @@ const Services = () => {
             Our Services
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-            Comprehensive Construction
-            <span className="text-primary block">Solutions</span>
+            {overrides?.heading ?? "Comprehensive Construction"}
+            <span className="text-primary block">{overrides?.subheading ?? "Solutions"}</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            We offer a full range of construction services to bring your vision to life, 
-            from initial planning to final completion.
+            {overrides?.intro ?? "We offer a full range of construction services to bring your vision to life, from initial planning to final completion."}
           </p>
         </div>
 

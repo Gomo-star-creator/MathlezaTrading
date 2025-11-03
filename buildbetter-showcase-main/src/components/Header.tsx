@@ -158,7 +158,9 @@ const navItems = [
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <Building2 className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-primary">Mathleza Trading</span>
+            <Link to="/admin-login" className="text-xl font-bold text-primary hover:underline">
+              Mathleza Trading
+            </Link>
           </div>
 
           {/* Desktop Navigation */}

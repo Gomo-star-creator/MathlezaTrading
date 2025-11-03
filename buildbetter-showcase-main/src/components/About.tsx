@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Check, Shield, Clock, Trophy } from "lucide-react";
+import { getContent } from "@/lib/contentStore";
 
 const About = () => {
   const values = [
@@ -29,6 +30,7 @@ const About = () => {
     "Skills Development Partner"
   ];
 
+  const overrides = getContent("about");
   return (
     <section id="about" className="py-20 bg-white">
       <div className="container mx-auto px-4 lg:px-8">
@@ -36,18 +38,14 @@ const About = () => {
           {/* Content */}
           <div>
             <span className="inline-block px-4 py-2 bg-accent/10 text-accent font-semibold rounded-full text-sm mb-4">
-              About Mathleza Trading
+              {overrides?.badge ?? "About Mathleza Trading"}
             </span>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-              Ubuntu Excellence
-              <span className="text-primary block">Since 2011</span>
+              {overrides?.heading ?? "Ubuntu Excellence"}
+              <span className="text-primary block">{overrides?.subheading ?? "Since 2011"}</span>
             </h2>
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              Founded in 2011, Mathleza Trading & Projects is a dynamic and 100% black-owned South African 
-              enterprise committed to Ubuntu excellence. We offer integrated services to government, 
-              corporate, educational, healthcare, and community institutions. Our services include 
-              construction, branding, cleaning, and general trading - all delivered with the spirit 
-              of Ubuntu: "I am because we are."
+              {overrides?.description ?? "Founded in 2011, Mathleza Trading & Projects is a dynamic and 100% black-owned South African enterprise committed to Ubuntu excellence. We offer integrated services to government, corporate, educational, healthcare, and community institutions. Our services include construction, branding, cleaning, and general trading - all delivered with the spirit of Ubuntu: 'I am because we are.'"}
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
@@ -60,7 +58,7 @@ const About = () => {
             </div>
 
             <Button variant="cta" size="lg">
-              Get Started Today
+              {overrides?.ctaLabel ?? "Get Started Today"}
             </Button>
           </div>
 

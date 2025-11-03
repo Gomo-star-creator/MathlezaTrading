@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
+import { getContent } from "@/lib/contentStore";
 import residentialImage from "@/assets/residential-construction.jpg";
 import commercialImage from "@/assets/commercial-construction.jpg";
 import renovationImage from "@/assets/renovation-services.jpg";
@@ -33,6 +34,7 @@ const Projects = () => {
     }
   ];
 
+  const overrides = getContent("projects");
   return (
     <section id="projects" className="py-20 bg-gradient-to-b from-construction-light/30 to-background">
       <div className="container mx-auto px-4 lg:px-8">
@@ -41,12 +43,11 @@ const Projects = () => {
             Our Portfolio
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-            Featured
-            <span className="text-primary block">Projects</span>
+            {overrides?.heading ?? "Featured"}
+            <span className="text-primary block">{overrides?.subheading ?? "Projects"}</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Explore our recent construction projects that showcase our commitment to 
-            quality, innovation, and client satisfaction.
+            {overrides?.intro ?? "Explore our recent construction projects that showcase our commitment to quality, innovation, and client satisfaction."}
           </p>
         </div>
 

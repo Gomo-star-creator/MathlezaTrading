@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, Shield, AlertTriangle, FileText, Wrench, Truck } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Link } from "react-router-dom";
 
 // Import machinery images
 import concreteBreakerImg from "@/assets/concrete-breaker.jpg";
@@ -102,29 +103,35 @@ const MachineHire = () => {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {machinery.map((machine, index) => (
-                  <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="aspect-video bg-muted overflow-hidden">
-                      <img 
-                        src={machine.image} 
-                        alt={machine.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <CardTitle className="text-xl">{machine.name}</CardTitle>
-                        <Badge variant="secondary" className="text-lg font-bold">
-                          {machine.rate}
-                        </Badge>
+                  <Link
+                    key={index}
+                    to={`/rental?machine=${encodeURIComponent(machine.name)}`}
+                    className="block"
+                  >
+                    <Card className="overflow-hidden hover:shadow-lg transition-shadow hover:translate-y-[-2px]">
+                      <div className="aspect-video bg-muted overflow-hidden">
+                        <img 
+                          src={machine.image} 
+                          alt={machine.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                      <CardDescription>{machine.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Uses:</strong> {machine.uses}
-                      </p>
-                    </CardContent>
-                  </Card>
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <CardTitle className="text-xl">{machine.name}</CardTitle>
+                          <Badge variant="secondary" className="text-lg font-bold">
+                            {machine.rate}
+                          </Badge>
+                        </div>
+                        <CardDescription>{machine.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground">
+                          <strong>Uses:</strong> {machine.uses}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>
