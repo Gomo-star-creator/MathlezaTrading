@@ -1,4 +1,3 @@
-
 Merged BuildBetter project with MailerSend SMTP backend and asset upload/storage.
 
 Backend: backend/EmailApi
@@ -24,3 +23,6 @@ How to run:
 Notes:
 - Uploaded files are saved to backend/wwwroot/uploads and served statically at /uploads/{filename}.
 - Metadata is kept in backend/uploads/metadata.json.
+- Admin Log in details:
+    - Username: MainAdmin
+    - Password: MainAdmin@01   
